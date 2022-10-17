@@ -281,8 +281,7 @@ def cc_toolchain_config(
     llvm_major_ver = int(llvm_version[0]) if len(llvm_version) else 0
     strip_binary = (tools_path_prefix + "llvm-strip") if llvm_major_ver >= 7 else _host_tools.get_and_assert(host_tools_info, "strip")
 
-    # TODO: The command line formed on darwin does not work with llvm-ar.
-    ar_binary = tools_path_prefix + "llvm-ar"
+    print(host_os)
     if host_os == "darwin":
         # Bazel uses arg files for longer commands; some old macOS `libtool`
         # versions do not support this.
@@ -293,6 +292,12 @@ def cc_toolchain_config(
             ar_binary = wrapper_bin_prefix + "bin/host_libtool_wrapper.sh"
         else:
             ar_binary = host_tools_info["libtool"]["path"]
+    else:
+        # TODO: The command line formed on darwin does not work with llvm-ar.
+        ar_binary = tools_path_prefix + "llvm-ar"
+    
+    print(ar_binary)
+
 
     # The tool names come from [here](https://github.com/bazelbuild/bazel/blob/c7e58e6ce0a78fdaff2d716b4864a5ace8917626/src/main/java/com/google/devtools/build/lib/rules/cpp/CppConfiguration.java#L76-L90):
     # NOTE: Ensure these are listed in toolchain_tools in toolchain/internal/common.bzl.
